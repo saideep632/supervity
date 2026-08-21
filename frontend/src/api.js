@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://supervity-pumdertgi-saideepaks-projects.vercel.app';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://supervity.vercel.app';
 
 async function request(path, options = {}) {
   const res = await fetch(`${BASE_URL}${path}`, {
