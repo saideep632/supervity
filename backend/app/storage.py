@@ -23,14 +23,19 @@ POLICIES_FILE = DATA_DIR / "policies.json"
 _lock = threading.Lock()
 
 
-def _ensure_store():
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if not POLICIES_FILE.exists():
-        POLICIES_FILE.write_text("[]")
+def _ensure_store() -> bool:
+    try:
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        if not POLICIES_FILE.exists():
+            POLICIES_FILE.write_text("[]")
+        return True
+    except OSError:
+        return False
 
 
 def load_policies() -> list[Policy]:
-    _ensure_store()
+    if not _ensure_store():
+        return []
     with _lock:
         raw = json.loads(POLICIES_FILE.read_text())
     return [Policy(**p) for p in raw]
