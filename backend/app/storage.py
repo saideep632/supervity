@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import os
+import tempfile
 import threading
 from pathlib import Path
 
@@ -19,32 +20,48 @@ from app.models import Policy
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).resolve().parent.parent / "data"))
 POLICIES_FILE = DATA_DIR / "policies.json"
+_active_policies_file: Path | None = None
 
 _lock = threading.Lock()
 
 
 def _ensure_store() -> bool:
+    global _active_policies_file
+    if _active_policies_file is not None:
+        return True
     try:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         if not POLICIES_FILE.exists():
             POLICIES_FILE.write_text("[]")
+        _active_policies_file = POLICIES_FILE
         return True
     except OSError:
-        return False
+        fallback = Path(tempfile.gettempdir()) / "supervity-policies.json"
+        try:
+            if not fallback.exists():
+                fallback.write_text("[]")
+            _active_policies_file = fallback
+            return True
+        except OSError:
+            return False
 
 
 def load_policies() -> list[Policy]:
     if not _ensure_store():
         return []
     with _lock:
-        raw = json.loads(POLICIES_FILE.read_text())
+        try:
+            raw = json.loads(_active_policies_file.read_text())
+        except (OSError, json.JSONDecodeError):
+            return []
     return [Policy(**p) for p in raw]
 
 
 def save_policies(policies: list[Policy]) -> None:
-    _ensure_store()
+    if not _ensure_store():
+        raise OSError("No writable policy storage is available")
     with _lock:
-        POLICIES_FILE.write_text(
+        _active_policies_file.write_text(
             json.dumps([json.loads(p.model_dump_json()) for p in policies], indent=2, default=str)
         )
 
