@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* --- Color tokens ------------------------------------------------ */
+  --ink: #14202B;          /* primary text / deep navy */
+  --ink-soft: #4A5A68;     /* secondary text */
+  --paper: #F5F6F4;        /* page background, warm-neutral */
+  --surface: #FFFFFF;      /* card background */
+  --surface-sunken: #EFF1EE; /* recessed panels, trace rows */
+  --line: #DCE0DB;         /* borders */
+  --line-strong: #B9C0BB;
+
+  --primary: #16324F;      /* deep ledger navy - primary actions */
+  --primary-hover: #1F4468;
+  --accent: #C7A24A;       /* muted brass - the one warm accent */
+
+  --approve: #1E7145;
+  --approve-bg: #E7F3EC;
+  --reject: #A3311F;
+  --reject-bg: #FBEAE7;
+  --escalate: #9A6B12;
+  --escalate-bg: #FBF1DD;
+
+  --focus: #2F6FED;
+
+  /* --- Type ---------------------------------------------------------*/
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius: 3px;
+  --radius-lg: 6px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+}
+
+a { color: var(--primary); }
+
+::selection {
+  background: var(--accent);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
