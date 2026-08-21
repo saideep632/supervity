@@ -21,6 +21,7 @@ from app.models import Policy
 DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).resolve().parent.parent / "data"))
 POLICIES_FILE = DATA_DIR / "policies.json"
 _active_policies_file: Path | None = None
+_memory_policies: list[Policy] = []
 
 _lock = threading.Lock()
 
@@ -47,6 +48,8 @@ def _ensure_store() -> bool:
 
 
 def load_policies() -> list[Policy]:
+    if os.environ.get("VERCEL"):
+        return list(_memory_policies)
     if not _ensure_store():
         return []
     with _lock:
@@ -58,6 +61,10 @@ def load_policies() -> list[Policy]:
 
 
 def save_policies(policies: list[Policy]) -> None:
+    if os.environ.get("VERCEL"):
+        _memory_policies.clear()
+        _memory_policies.extend(policies)
+        return
     if not _ensure_store():
         raise OSError("No writable policy storage is available")
     with _lock:
